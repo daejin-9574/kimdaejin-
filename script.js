@@ -17,15 +17,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const querySnapshot = await getDocs(collection(db, "report"));
-    const statusEl = document.getElementById("server-status");
+    const text = document.getElementById("status-text");
+    const dot = document.getElementById("status-dot");
+
     if (querySnapshot.size > 0) {
-      statusEl.innerHTML = "🟢 서버 연결 성공";
+      text.innerHTML = "🟢 서버 연결 성공";
+      dot.style.backgroundColor = "green";
     } else {
-      statusEl.innerHTML = "🟠 서버 연결 (데이터 없음)";
+      text.innerHTML = "🟠 서버 연결 (데이터 없음)";
+      dot.style.backgroundColor = "orange";
     }
   } catch (e) {
-    const statusEl = document.getElementById("server-status");
-    statusEl.innerHTML = "🔴 서버 연결 실패";
+    const text = document.getElementById("status-text");
+    const dot = document.getElementById("status-dot");
+    text.innerHTML = "🔴 서버 연결 실패";
+    dot.style.backgroundColor = "red";
     console.error("Firebase 연결 오류:", e);
   }
 });
+
