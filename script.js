@@ -1,4 +1,3 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
@@ -12,10 +11,11 @@ const firebaseConfig = {
   measurementId: "G-XYLJ1SS6PD"
 };
 
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
     const querySnapshot = await getDocs(collection(db, "report"));
     const statusEl = document.getElementById("server-status");
     if (querySnapshot.size > 0) {
