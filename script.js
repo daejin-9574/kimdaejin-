@@ -3,9 +3,9 @@ import { getFirestore, collection, getDocs } from "https://www.gstatic.com/fireb
 
 const firebaseConfig = {
   apiKey: "AIzaSyAoLoX11dVEOrGSJSUKZI6F23ep5DFZBo0",
-  authDomain: "service-report-22d23.firebaseapp.com",
-  projectId: "service-report-22d23",
-  storageBucket: "service-report-22d23.appspot.com",
+  authDomain: "service-reports-22d23.firebaseapp.com",
+  projectId: "service-reports-22d23",
+  storageBucket: "service-reports-22d23.appspot.com",
   messagingSenderId: "467709604044",
   appId: "1:467709604044:web:82be6d0de9289cfd3b9269",
   measurementId: "G-XYLJ1SS6PD"
@@ -16,7 +16,7 @@ const db = getFirestore(app);
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "report"));
+    const querySnapshot = await getDocs(collection(db, "reports"));
     const statusEl = document.getElementById("server-status");
     if (querySnapshot.size > 0) {
       statusEl.innerHTML = "🟢 서버 연결 성공";
