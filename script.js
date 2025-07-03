@@ -3,7 +3,6 @@ import { app } from "./firebase-init.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const db = getFirestore(app);
     const querySnapshot = await getDocs(collection(db, "report"));
     const statusEl = document.getElementById("server-status");
     if (querySnapshot.size > 0) {
