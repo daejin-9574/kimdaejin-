@@ -1,15 +1,14 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
 
+// Firebase 설정
 const firebaseConfig = {
-  apiKey: "AIzaSyAoLoX11dVEOrGSJSUKZI6F23ep5DFZBo0",
-  authDomain: "service-report-22d23.firebaseapp.com",
-  projectId: "service-report-22d23",
-  storageBucket: "service-report-22d23.firebasestorage.app",
+  apiKey: "AIzaSyA3KtmfxaUEFTCeTfGYGNfR3tK-XJp9x1I",
+  authDomain: "bitekps-report-mail-server.firebaseapp.com",
+  projectId: "bitekps-report-mail-server",
+  storageBucket: "bitekps-report-mail-server.appspot.com",
   messagingSenderId: "467709604044",
-  appId: "1:467709604044:web:82be6d0de9289cfd3b9269",
-  measurementId: "G-XYLJ1SS6PD"
+  appId: "1:467709604044:web:82be6d0de9289cfd3b9269"
 };
 
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Firebase 초기화
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
