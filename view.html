@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>서비스 리포트 조회</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div id="server-status" class="fixed top-2 left-2 flex items-center text-sm z-50">
+  <span class="w-3 h-3 rounded-full mr-2" id="status-dot" style="background-color: yellow;"></span>
+  <span id="status-text">서버 연결 중...</span>
+</div>
+ 
+  <div class="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg my-6">
+    <h1 class="text-2xl font-bold text-center mb-6">서비스 리포트 조회</h1>
+
+    <div class="mb-4">
+      <label class="mr-2">고객사:</label><input type="text" id="search-company" class="border p-1" />
+      <label class="ml-4 mr-2">작성일(From):</label><input type="date" id="search-from" class="border p-1" /> <label class="ml-2 mr-2">To:</label><input type="date" id="search-to" class="border p-1" />
+      <button onclick="searchReports()" class="ml-4 px-4 py-1 bg-blue-500 text-white rounded">검색</button>
+    </div>
+
+    <table class="table-auto w-full border text-center" id="result-table">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border p-2">작성일</th>
+          <th class="border p-2">고객사</th>
+          <th class="border p-2">고장현상</th>
+          <th class="border p-2">조치사항</th>
+          <th class="border p-2">상세보기</th>
+        </tr>
+      </thead>
+      <tbody id="report-list">
+        <tr><td colspan="5" class="border p-4">데이터를 불러오는 중...</td></tr>
+      </tbody>
+    </table>
+
+    <div class="text-center mt-6">
+      <button onclick="window.location.href='index.html'" class="underline text-blue-600">← 서비스 리포트 작성</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAoLoX11dVEOrGSJSUKZI6F23ep5DFZBo0",
+      authDomain: "service-report-22d23.firebaseapp.com",
+      projectId: "service-report-22d23",
+      storageBucket: "service-report-22d23.firebasestorage.app",
+      messagingSenderId: "467709604044",
+      appId: "1:467709604044:web:82be6d0de9289cfd3b9269",
+      measurementId: "G-XYLJ1SS6PD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadReports(filterCompany = '', filterDate = '') {
+      const q = collection(db, "reports");
+      const snapshot = await getDocs(q);
+      const tbody = document.getElementById("report-list");
+      tbody.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if ((filterCompany && !data.고객사.includes(filterCompany)) ||
+            (filterDate && data.작성일 !== filterDate)) return;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="border p-2">${data.작성일}</td>
+          <td class="border p-2">${data.고객사}</td>
+          <td class="border p-2">${data.고장현상?.substring(0, 20) || ""}</td>
+          <td class="border p-2">${data.조치사항?.substring(0, 20) || ""}</td>
+          <td class="border p-2"><button class="text-blue-600 underline" onclick='alert("상세보기 구현 예정")'>자세히</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function searchReports() {
+      const company = document.getElementById("search-company").value;
+      const date = document.getElementById("search-to").value;
+      loadReports(company, date);
+    }
+
+    
+    async function loadReports(filterCompany = '', filterDate = '') {
+      const q = collection(db, "reports");
+      const snapshot = await getDocs(q);
+      const tbody = document.getElementById("report-list");
+      tbody.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if ((filterCompany && !data.고객사.includes(filterCompany)) ||
+            (filterDate && data.작성일 !== filterDate)) return;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="border p-2">${data.작성일}</td>
+          <td class="border p-2">${data.고객사}</td>
+          <td class="border p-2">${(data.고장현상 || "").substring(0, 20)}</td>
+          <td class="border p-2">${(data.조치사항 || "").substring(0, 20)}</td>
+          <td class="border p-2"><button class="text-blue-600 underline" onclick='showDetails(${JSON.stringify(data)})'>자세히</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.showDetails = function(data) {
+      const content = Object.entries(data).map(([key, val]) => key + ": " + (typeof val === 'object' ? JSON.stringify(val) : val)).join("\n");
+      document.getElementById("details-content").innerText = content;
+      document.getElementById("details-modal").classList.remove("hidden");
+    };
+
+    loadReports();
+  </script>
+
+<div id="details-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg p-6 w-11/12 md:w-2/3 max-h-[90vh] overflow-auto shadow-lg">
+    <h2 class="text-xl font-bold mb-4">리포트 상세 내용</h2>
+    <div id="details-content" class="text-left whitespace-pre-wrap text-sm"></div>
+    <div class="text-right mt-4">
+      <button onclick="document.getElementById('details-modal').classList.add('hidden')" class="px-4 py-2 bg-red-500 text-white rounded">닫기</button>
+    </div>
+  </div>
+</div>
+</body>
+
+</html>
