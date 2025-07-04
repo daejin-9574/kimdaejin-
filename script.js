@@ -1,44 +1,37 @@
 
-import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-import { db } from './firebase-init.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-window.searchReports = async function () {
-  const tbody = document.getElementById("reportTableBody");
-  tbody.innerHTML = "<tr><td colspan='5' class='text-center py-2'>데이터를 불러오는 중...</td></tr>";
-
-  const customer = document.getElementById("searchCustomer").value.trim();
-  const startDate = document.getElementById("searchStartDate").value;
-  const endDate = document.getElementById("searchEndDate").value;
-
-  let q = collection(db, "report");
-  let conditions = [];
-
-  if (customer) conditions.push(where("고객사", "==", customer));
-  if (startDate) conditions.push(where("작성일", ">=", startDate));
-  if (endDate) conditions.push(where("작성일", "<=", endDate));
-
-  if (conditions.length > 0) {
-    q = query(q, ...conditions);
-  }
-
-  const snapshot = await getDocs(q);
-
-  if (snapshot.empty) {
-    tbody.innerHTML = "<tr><td colspan='5' class='text-center py-2'>검색된 데이터가 없습니다.</td></tr>";
-    return;
-  }
-
-  tbody.innerHTML = "";
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="border px-2 py-1">${data["작성일"] || ""}</td>
-      <td class="border px-2 py-1">${data["고객사"] || ""}</td>
-      <td class="border px-2 py-1">${data["고장현상"] || ""}</td>
-      <td class="border px-2 py-1">${data["조치사항"] || ""}</td>
-      <td class="border px-2 py-1"><a href="#" class="text-blue-600 hover:underline">보기</a></td>
-    `;
-    tbody.appendChild(tr);
-  });
+const firebaseConfig = {
+  apiKey: "AIzaSyAoLoX11dVEOrGSJSUKZI6F23ep5DFZBo0",
+  authDomain: "service-report-22d23.firebaseapp.com",
+  projectId: "service-report-22d23",
+  storageBucket: "service-report-22d23.appspot.com",
+  messagingSenderId: "467709604044",
+  appId: "1:467709604044:web:82be6d0de9289cfd3b9269",
+  measurementId: "G-XYLJ1SS6PD"
 };
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const querySnapshot = await getDocs(collection(db, "report"));
+    const statusEl = document.getElementById("server-status");
+    if (querySnapshot.size > 0) {
+      statusEl.innerHTML = "🟢 서버 연결 성공";
+    } else {
+      statusEl.innerHTML = "🟠 서버 연결 (데이터 없음)";
+    }
+  } catch (e) {
+    const statusEl = document.getElementById("server-status");
+    statusEl.innerHTML = "🔴 서버 연결 실패";
+    console.error("Firebase 연결 오류:", e);
+  }
+function searchReports() {
+  // 예시 동작
+  console.log("검색 실행!");
+  // 서버에서 리포트 데이터를 가져오는 코드
+}
+
+});
