@@ -1,0 +1,10 @@
+@import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+body { background: #f9f9f9; }
+.input, .textarea { width: 100%; padding: .5rem; border: 1px solid #ccc; border-radius: .25rem; }
+.btn, .btn-sm, .btn-primary, .back {
+  @apply bg-blue-600 text-white py-2 px-4 rounded;
+}
+.btn { width: 200px; text-align: center; }
+.btn-sm { @apply text-sm py-1 px-2; }
+.btn-primary { @apply bg-green-600; }
+.back { @apply mb-4 inline-block; }

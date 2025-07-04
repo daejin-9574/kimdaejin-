@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="styles.css" rel="stylesheet">
+  <title>리포트 작성</title>
+</head>
+<body class="p-4">
+  <div id="status" class="fixed top-2 left-2"></div>
+  <button class="back" onclick="location.href='index.html'">◀ 메인으로</button>
+  <h2 class="text-xl font-semibold mb-4">Service Report 작성</h2>
+
+  <form id="reportForm" class="space-y-4" data-id="">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div><label>작성일</label><input type="date" id="date" required class="input"></div>
+      <div><label>고객사</label><input id="customer" class="input"></div>
+    </div>
+    <div>
+      <label>고장현상</label>
+      <textarea id="issue" class="textarea"></textarea>
+    </div>
+    <div>
+      <label>조치사항</label>
+      <textarea id="action" class="textarea"></textarea>
+    </div>
+    <button type="submit" class="btn-primary">저장</button>
+  </form>
+
+  <script type="module">
+    import { db, setDoc, doc, onSnapshot } from './firebase.js';
+    import { checkConnection } from './firebase.js';
+
+    const statusEl = document.getElementById('status');
+    (async()=>{statusEl.textContent = (await checkConnection())? '🟢 서버 연결 성공':'🔴 연결 실패';})();
+
+    const form = document.getElementById('reportForm');
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = form.dataset.id || Date.now().toString();
+      const data = {
+        date: form.date.value,
+        customer: form.customer.value,
+        issue: form.issue.value,
+        action: form.action.value,
+        updatedAt: new Date()
+      };
+      await setDoc(doc(db, 'reports', id), data);
+      alert('저장 완료');
+    });
+  </script>
+</body>
+</html>

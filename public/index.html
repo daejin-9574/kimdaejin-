@@ -1,17 +1,28 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>서비스 리포트 - 작성</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="styles.css" rel="stylesheet">
+  <title>Service Report - Main</title>
 </head>
-<body>
-  <div>
-    <h1>🛠 서비스 리포트 작성 페이지</h1>
-    <p id="server-status">서버 상태 확인 중...</p>
+<body class="p-4">
+  <div id="status" class="fixed top-2 left-2"></div>
+  <h1 class="text-2xl font-bold mb-4 text-center">SERVICE REPORT</h1>
+
+  <div class="flex flex-col sm:flex-row justify-center gap-4">
+    <button onclick="location.href='create.html'" class="btn">리포트 작성</button>
+    <button onclick="location.href='view.html'" class="btn">리포트 조회</button>
   </div>
 
-  <script type="module" src="./script.js"></script>
+  <script type="module">
+    import { checkConnection } from './firebase.js';
+    const statusEl = document.getElementById('status');
+    async function renderStatus() {
+      const ok = await checkConnection();
+      statusEl.textContent = ok ? '🟢 서버 연결 성공' : '🔴 연결 실패';
+    }
+    renderStatus();
+  </script>
 </body>
 </html>

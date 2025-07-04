@@ -1,17 +1,46 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>서비스 리포트 - 조회</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="styles.css" rel="stylesheet">
+  <title>리포트 조회</title>
 </head>
-<body>
-  <div>
-    <h1>📄 서비스 리포트 조회 페이지</h1>
-    <p id="server-status">서버 상태 확인 중...</p>
-  </div>
+<body class="p-4">
+  <div id="status" class="fixed top-2 left-2"></div>
+  <button class="back" onclick="location.href='index.html'">◀ 메인으로</button>
+  <h2 class="text-xl font-semibold mb-4">저장된 리포트 조회</h2>
+  <ul id="list" class="space-y-2"></ul>
 
-  <script type="module" src="./script.js"></script>
+  <template id="itemTpl">
+    <li class="border p-2 flex justify-between items-center">
+      <span class="info"></span>
+      <div class="space-x-2">
+        <button class="btn-sm pdfBtn">PDF 저장</button>
+        <button class="btn-sm mailBtn">메일 발송</button>
+      </div>
+    </li>
+  </template>
+
+  <script type="module">
+    import { db, onSnapshot, collection, doc } from './firebase.js';
+    import { functions } from './firebase.js';
+    const statusEl = document.getElementById('status');
+    (async()=>{statusEl.textContent = (await import('./firebase.js')).checkConnection()? '🟢 서버 연결 성공':'🔴 연결 실패';})();
+
+    const list = document.getElementById('list');
+    const tpl = document.getElementById('itemTpl');
+    onSnapshot(collection(db, 'reports'), snap => {
+      list.innerHTML = '';
+      snap.forEach(doc => {
+        const data = doc.data();
+        const li = tpl.content.cloneNode(true);
+        li.querySelector('.info').textContent = `${data.date} - ${data.customer}`;
+        li.querySelector('.pdfBtn').onclick = () => functions.generatePdf({ id: doc.id });
+        li.querySelector('.mailBtn').onclick = () => functions.sendReportMail({ id: doc.id });
+        list.append(li);
+      });
+    });
+  </script>
 </body>
 </html>
