@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Firebase 연결 테스트</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAoLoX11dVEOrGSJSUKZI6F23ep5DFZBo0",
+      authDomain: "service-report-22d23.firebaseapp.com",
+      projectId: "service-report-22d23",
+      storageBucket: "service-report-22d23.appspot.com",
+      messagingSenderId: "467709604044",
+      appId: "1:467709604044:web:82be6d0de9289cfd3b9269",
+      measurementId: "G-XYLJ1SS6PD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const statusEl = document.getElementById("status");
+      try {
+        const snapshot = await getDocs(collection(db, "report"));
+        if (snapshot.size > 0) {
+          statusEl.textContent = "🟢 서버 연결 성공: 데이터 있음";
+        } else {
+          statusEl.textContent = "🟠 서버 연결 성공: 데이터 없음";
+        }
+      } catch (e) {
+        statusEl.textContent = "🔴 서버 연결 실패";
+        console.error(e);
+      }
+    });
+  </script>
+</head>
+<body>
+  <h1>🔍 Firebase 서버 연결 상태 확인</h1>
+  <p id="status">⏳ 확인 중...</p>
+</body>
+</html>
